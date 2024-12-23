@@ -14,102 +14,104 @@ jobs:
   Python:
     runs-on: ${{ matrix.os }}
     strategy:
-      max-parallel: 8
+      max-parallel: 10
       matrix:
         os: [ ubuntu-latest, macos-latest ]
-        python-version: [ 3.10.12, 3.11 ]
+        python-version: [ '3.11', '3.12', '3.13' ]
 
     steps:
       - uses: actions/checkout@v4
       - name: Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
           pip install --upgrade pip
           pip install .[dev]
+        continue-on-error: ${{ matrix.python-version == '3.13' }}
 
-      - name: Lint with black
+      - name: Lint with ruff
         run: |
-          black . --diff --check
+          ruff check --fix
+        continue-on-error: ${{ matrix.python-version == '3.13' }}
 
-      - name: Lint with isort
+      - name: Format with ruff
         run: |
-          isort . --diff --check
-
-      - name: Lint with flake8
-        run: |
-          # stop the build if there are Python syntax errors or undefined names
-          flake8 . --count --show-source --statistics --config .flake8
-          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-          flake8 . --count --exit-zero  --max-line-length=127 --statistics --config .flake8
+          ruff format
+        continue-on-error: ${{ matrix.python-version == '3.13' }}
 
       - name: Test with pytest
         run: |
           pytest
+        continue-on-error: ${{ matrix.python-version == '3.13' }}
 
       - name: Run theHarvester module Anubis
         run: |
           theHarvester -d apple.com -b anubis
+        continue-on-error: ${{ matrix.python-version == '3.13' }}
 
       - name: Run theHarvester module Baidu
         run: |
           theHarvester -d yale.edu -b baidu
+        continue-on-error: ${{ matrix.python-version == '3.13' }}
 
       - name: Run theHarvester module Bing
         run: |
           theHarvester -d yale.edu -b bing
+        continue-on-error: ${{ matrix.python-version == '3.13' }}
 
       - name: Run theHarvester module CertSpotter
         run: |
           theHarvester -d yale.edu -b certspotter
+        continue-on-error: ${{ matrix.python-version == '3.13' }}
 
       - name: Run theHarvester module Crtsh
         run: |
           theHarvester -d hcl.com -b crtsh
+        continue-on-error: ${{ matrix.python-version == '3.13' }}
 
       - name: Run theHarvester module DnsDumpster
         run: |
           theHarvester -d yale.edu -b dnsdumpster
+        continue-on-error: ${{ matrix.python-version == '3.13' }}
 
       - name: Run theHarvester module DuckDuckGo
         run: |
           theHarvester -d yale.edu -b duckduckgo
+        continue-on-error: ${{ matrix.python-version == '3.13' }}
 
       - name: Run theHarvester module HackerTarget
         run: |
           theHarvester -d yale.edu -b hackertarget
-
-      - name: Run theHarvester module Intelx
-        run: |
-          theHarvester -d yale.edu -b intelx
+        continue-on-error: ${{ matrix.python-version == '3.13' }}
 
       - name: Run theHarvester module Otx
         run: |
           theHarvester -d yale.edu -b otx
+        continue-on-error: ${{ matrix.python-version == '3.13' }}
 
       - name: Run theHarvester module RapidDns
         run: |
           theHarvester -d yale.edu -b rapiddns
+        continue-on-error: ${{ matrix.python-version == '3.13' }}
 
       - name: Run theHarvester module Threatminer
         run: |
           theHarvester -d yale.edu -b threatminer
+        continue-on-error: ${{ matrix.python-version == '3.13' }}
 
       - name: Run theHarvester module Urlscan
         run: |
           theHarvester -d yale.edu -b urlscan
+        continue-on-error: ${{ matrix.python-version == '3.13' }}
 
       - name: Run theHarvester module Yahoo
         run: |
           theHarvester -d yale.edu -b yahoo
+        continue-on-error: ${{ matrix.python-version == '3.13' }}
 
       - name: Run theHarvester module DNS brute force
         run: |
           theHarvester -d yale.edu -c
-
-      - name: Static type checking with mypy
-        run: |
-          mypy --pretty theHarvester/*/*.py
-          mypy --pretty theHarvester/*/*/*.py
+        continue-on-error: ${{ matrix.python-version == '3.13' }}

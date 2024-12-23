@@ -1,6 +1,4 @@
-# coding=utf-8
-
-VERSION = "4.4.4"
+VERSION = '4.7.0'
 
 
 def version() -> str:
